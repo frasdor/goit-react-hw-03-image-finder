@@ -15,6 +15,7 @@ class App extends Component {
     loading: false,
     showModal: false,
     largeImageURL: null,
+    error: null, // Nowy stan dla przechowywania błędów
   };
 
   componentDidMount() {
@@ -30,19 +31,32 @@ class App extends Component {
 
   fetchImages = () => {
     const { query, page } = this.state;
-    this.setState({ loading: true });
+    this.setState({ loading: true, error: null  }); // Resetujemy stan błędu przed nowym zapytaniem
 
     fetchImages(query, page)
       .then((newImages) => {
+        if (newImages.length === 0) {
+          this.setState({ error: 'No search results found.' });
+          return;
+        }
         this.setState((prevState) => ({
           images: [...prevState.images, ...newImages],
-        }));
+        }), () => {
+          // Scrollowanie w dół po dodaniu nowych obrazów
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth',
+          });
+        });
+      })
+      .catch(() => {
+        this.setState({ error: 'An error occurred while fetching images.' });
       })
       .finally(() => this.setState({ loading: false }));
   };
 
   handleSearchSubmit = (newQuery) => {
-    this.setState({ query: newQuery, images: [], page: 1 });
+    this.setState({ query: newQuery, images: [], page: 1, error: null });
   };
 
   handleLoadMore = () => {
@@ -58,14 +72,16 @@ class App extends Component {
   };
 
   render() {
-    const { images, loading, showModal, largeImageURL } = this.state;
+    const { images, loading, showModal, largeImageURL, error } = this.state;
     return (
       <div className={styles.app}>
         <Searchbar onSubmit={this.handleSearchSubmit} />
+        {showModal && <Modal largeImageURL={largeImageURL} onClose={this.handleCloseModal} />}
+        {error && <p className={styles.error}>{error}</p>} {/* Wyświetlanie komunikatu błędu */}
         <ImageGallery images={images} onImageClick={this.handleImageClick} />
         {loading && <Loader />}
         {images.length > 0 && !loading && <Button onClick={this.handleLoadMore} />}
-        {showModal && <Modal largeImageURL={largeImageURL} onClose={this.handleCloseModal} />}
+        
       </div>
     );
   }

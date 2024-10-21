@@ -18,6 +18,13 @@
     background: white; /* White background for the modal */
     border-radius: 8px; /* Rounded corners for aesthetic appeal */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds shadow for depth */
-    overflow-y: auto; /* Enables vertical scroll if content exceeds max height */
+     overflow-y: auto;/* Enables vertical scroll if content exceeds max height */
+    /* overflow: hidden; */
+    }
 
-     }
+  .Modal img {
+    
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }

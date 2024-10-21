@@ -1,6 +1,5 @@
 .loader {
-    display: flex; /* Umożliwia użycie flexboxa */
-    justify-content: center; /* Wyśrodkowanie w poziomie */
-    align-items: center; /* Wyśrodkowanie w pionie */
+    display: flex; 
+    justify-content: center; 
     
   }
